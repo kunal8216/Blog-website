@@ -1,0 +1,774 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>My Awesome Blog</title>
+  <!-- Google Fonts -->
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
+  <!-- Font Awesome for icons -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" />
+  <style>
+    /* Theme Variables */
+    :root {
+      --primary-color: #56ab2f;
+      --secondary-color: #333;
+      --accent-color: #444;
+      --background-color: #f4f4f4;
+      --header-bg: linear-gradient(135deg, var(--secondary-color), var(--accent-color));
+      --link-color: #fff;
+      --hover-color: var(--primary-color);
+    }
+    
+    /* Global Styles */
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+    body {
+      font-family: 'Poppins', sans-serif;
+      background-color: var(--background-color);
+      line-height: 1.6;
+      color: var(--secondary-color);
+    }
+    a {
+      text-decoration: none;
+      color: inherit;
+    }
+    img {
+      max-width: 100%;
+      display: block;
+    }
+    .container {
+      width: 90%;
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 0 15px;
+    }
+    
+    /* Header */
+    header {
+      background: var(--header-bg);
+      color: var(--link-color);
+      padding: 20px 0;
+      position: sticky;
+      top: 0;
+      z-index: 1000;
+      transition: all 0.3s ease;
+    }
+    /* Desktop Header: Header container as a row */
+    .header-container {
+      display: flex;
+      flex-direction: row;
+      align-items: center;
+      justify-content: space-between;
+    }
+    /* Header Left: Avatar and Logo Text */
+    .header-left {
+      display: flex;
+      align-items: center;
+    }
+    .header-avatar {
+      width: 60px;
+      height: 60px;
+      border-radius: 50%;
+      object-fit: cover;
+      margin-right: 15px;
+    }
+    .logo-text {
+      font-size: 2.2em;
+      font-weight: 600;
+      letter-spacing: 0.5px;
+    }
+    /* Navigation Container (Desktop) */
+    .nav-container {
+      /* In desktop view, display the nav as-is */
+      max-height: none;
+    }
+    nav ul {
+      list-style: none;
+      display: flex;
+      gap: 20px;
+      justify-content: flex-end;
+    }
+    nav ul li a {
+      color: var(--link-color);
+      font-weight: 500;
+      position: relative;
+      transition: color 0.3s ease, transform 0.3s ease;
+    }
+    nav ul li a::after {
+      content: "";
+      position: absolute;
+      width: 0;
+      height: 2px;
+      bottom: -2px;
+      left: 50%;
+      background-color: var(--primary-color);
+      transition: width 0.3s ease, left 0.3s ease;
+    }
+    nav ul li a:hover {
+      color: var(--primary-color);
+      transform: translateY(-3px);
+    }
+    nav ul li a:hover::after {
+      width: 100%;
+      left: 0;
+    }
+    nav ul li a.tracker-link {
+      border-bottom: 2px solid transparent;
+      padding-bottom: 2px;
+    }
+    nav ul li a.tracker-link:hover {
+      border-bottom: 2px solid var(--primary-color);
+    }
+    
+    /* Burger Icon (hidden on desktop) */
+    .burger {
+      display: none;
+      flex-direction: column;
+      gap: 5px;
+      cursor: pointer;
+    }
+    .burger .bar {
+      width: 25px;
+      height: 3px;
+      background-color: var(--link-color);
+      transition: all 0.3s ease;
+    }
+    
+    /* Responsive Styles for Mobile */
+    @media (max-width: 768px) {
+      .header-container {
+        flex-direction: column;
+        align-items: stretch;
+      }
+      /* Top row stays as a row */
+      .header-top {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        width: 100%;
+      }
+      /* Burger icon appears on mobile */
+      .burger {
+        display: flex;
+      }
+      /* Collapse the navigation container by default */
+      .nav-container {
+        width: 100%;
+        overflow: hidden;
+        transition: max-height 0.3s ease-out;
+        max-height: 0;
+      }
+      /* When header is expanded, show the nav container */
+      header.expanded .nav-container {
+        max-height: 500px;
+      }
+      /* In mobile view, center the nav items */
+      nav ul {
+        flex-direction: column;
+        align-items: center;
+        gap: 10px;
+        padding: 10px 0;
+      }
+      /* Adjust header font sizes for mobile */
+      .logo-text {
+        font-size: 1.8em;
+      }
+    }
+    
+    /* New About Section */
+    .about-section {
+      padding: 60px 0;
+      background: #fff;
+    }
+    .about-section h2 {
+      text-align: center;
+      font-size: 2em;
+      margin-bottom: 20px;
+      color: var(--secondary-color);
+    }
+    .about-section p {
+      font-size: 1.3em;
+      text-align: center;
+      max-width: 800px;
+      margin: 0 auto;
+      color: #666;
+    }
+    
+    /* New What Am I? Section */
+    .what-am-i-section {
+      padding: 60px 0;
+      background: #f0f0f0;
+    }
+    .what-am-i-section h2 {
+      text-align: center;
+      font-size: 2em;
+      margin-bottom: 20px;
+      color: var(--secondary-color);
+    }
+    .what-am-i-section p {
+      font-size: 1.2em;
+      text-align: center;
+      max-width: 900px;
+      margin: 0 auto;
+      color: #555;
+      line-height: 1.8;
+    }
+    
+    /* Main Content (Blog Posts) */
+    main {
+      padding: 40px 0;
+    }
+    .posts {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+      gap: 20px;
+    }
+    .post {
+      background: #fff;
+      border-radius: 8px;
+      overflow: hidden;
+      box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+      transition: transform 0.3s ease;
+    }
+    .post:hover {
+      transform: translateY(-5px);
+    }
+    .post img {
+      width: 100%;
+      height: 250px;
+      object-fit: cover;
+    }
+    .post-content {
+      padding: 20px;
+    }
+    .post h2 {
+      font-size: 1.5em;
+      margin-bottom: 10px;
+      color: var(--secondary-color);
+    }
+    .post p {
+      font-size: 1em;
+      margin-bottom: 15px;
+      color: #666;
+    }
+    .read-more {
+      display: inline-block;
+      background: var(--primary-color);
+      color: #fff;
+      padding: 10px 15px;
+      border-radius: 5px;
+      transition: background 0.3s ease;
+    }
+    .read-more:hover {
+      background: #429d24;
+    }
+    
+    /* Unified Contact Card Section */
+    #contact {
+      background: #f7f7f7;
+      padding: 60px 0;
+      margin-top: 40px;
+    }
+    #contact h2 {
+      text-align: center;
+      font-size: 2em;
+      color: var(--secondary-color);
+      margin-bottom: 40px;
+    }
+    .contact-card {
+      background: #fff;
+      padding: 40px 30px;
+      border-radius: 8px;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+      width: 100%;
+      max-width: calc(100% - 30px);
+      margin: 0 auto;
+      display: flex;
+      flex-direction: row;
+      gap: 50px;
+    }
+    /* Left Column: Contact Details */
+    .contact-details {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      gap: 15px;
+      font-size: 1em;
+      color: #555;
+    }
+    .contact-details p {
+      display: flex;
+      align-items: center;
+      margin: 0;
+    }
+    .contact-details p i {
+      font-size: 1.2em;
+      margin-right: 10px;
+      color: var(--primary-color);
+    }
+    /* Right Column: Contact Form */
+    .contact-form {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+    }
+    .contact-form .form-control {
+      width: 100%;
+      padding: 12px;
+      border: 1px solid #ddd;
+      border-radius: 4px;
+      font-size: 1.1em;
+    }
+    .contact-form textarea.form-control {
+      resize: vertical;
+      min-height: 120px;
+      font-size: 1.1em;
+    }
+    .contact-form button {
+      background: var(--primary-color);
+      color: #fff;
+      border: none;
+      padding: 12px 25px;
+      border-radius: 4px;
+      font-size: 1em;
+      cursor: pointer;
+      transition: background 0.3s ease;
+      align-self: flex-start;
+    }
+    .contact-form button:hover {
+      background: #429d24;
+    }
+    /* Placeholder Styles */
+    .contact-form .form-control::placeholder,
+    .contact-form textarea.form-control::placeholder {
+      font-size: 1em;
+    }
+    .contact-form .form-control::-webkit-input-placeholder,
+    .contact-form textarea.form-control::-webkit-input-placeholder {
+      font-size: 1em;
+    }
+    .contact-form .form-control:-ms-input-placeholder,
+    .contact-form textarea.form-control:-ms-input-placeholder {
+      font-size: 1em;
+    }
+    
+    /* User Avatar Section */
+    .user-details-section {
+      text-align: center;
+      padding: 20px 0;
+      background: #fff;
+      margin-top: 20px;
+	  height: 530px;
+    }
+    .user-avatar-container {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      margin-bottom: 10px;
+    }
+    .user-avatar-line {
+      flex: 1;
+      border-top: 1px solid #ccc;
+      margin: 0 10px;
+    }
+    .user-avatar-container a {
+      display: inline-block;
+    }
+    .user-avatar-container img.photo {
+      width: 100px;
+      height: 100px;
+      border-radius: 50%;
+      object-fit: cover;
+      border: 3px solid var(--primary-color);
+    }
+    .user-name {
+      font-size: 1.2em;
+      font-weight: 600;
+      color: var(--secondary-color);
+    }
+    .user-bio {
+      font-size: 1em;
+      color: #666;
+      margin-top: 5px;
+    }
+    
+    /* Footer */
+    footer {
+      background: var(--secondary-color);
+      color: #fff;
+      text-align: center;
+      padding: 20px 0;
+      margin-top: 40px;
+    }
+	
+	/* From Uiverse.io by satyamchaudharydev */ 
+.card {
+	margin: auto;
+	margin-top: 20px;
+  --bg: #f7f7f8;
+  --hover-bg: #FFE5F4;
+  --hover-text: #E50087;
+  max-width: 23ch;
+  text-align: center;
+  background: var(--bg);
+  padding: 1.5em;
+  padding-block: 1.8em;
+  border-radius: 5px;
+  position: relative;
+  overflow: hidden;
+  transition: .3s cubic-bezier(.6,.4,0,1),transform .15s ease;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  gap: 1em;
+}
+
+.card__body {
+  color: #464853;
+  line-height: 1.5em;
+  font-size: 1em;
+}
+
+.card > :not(span) {
+  transition: .3s cubic-bezier(.6,.4,0,1);
+}
+
+.card > strong {
+  display: block;
+  font-size: 1.4rem;
+  letter-spacing: -.035em;
+}
+
+.card span {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  color: var(--hover-text);
+  border-radius: 5px;
+  font-weight: bold;
+  top: 100%;
+  transition: all .3s cubic-bezier(.6,.4,0,1);
+}
+
+.card:hover span {
+  top: 0;
+  font-size: 1.2em;
+}
+
+.card:hover {
+  background: var(--hover-bg);
+}
+
+.card:hover>div,.card:hover>strong {
+  opacity: 0;
+}
+  </style>
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body>
+  <!-- Header Section -->
+  <header id="main-header">
+    <div class="container header-container">
+      <div class="header-top">
+        <div class="header-left">
+          <img class="header-avatar" src="images/1648540034361.jpg" alt="Avatar">
+          <div class="logo-text">Kunal's Blog</div>
+        </div>
+        <div class="burger">
+          <div class="bar"></div>
+          <div class="bar"></div>
+          <div class="bar"></div>
+        </div>
+      </div>
+      <nav class="nav-container">
+        <ul>
+          <li><a href="#">Home</a></li>
+          <li><a href="#">About</a></li>
+          <li><a href="#">Categories</a></li>
+          <li><a href="#">Contact</a></li>
+          <li><a class="tracker-link" href="tracker.html">Tracker</a></li>
+        </ul>
+      </nav>
+    </div>
+  </header>
+  
+  <!-- About Section -->
+  <section class="about-section">
+    <div class="container">
+      <h2>About</h2>
+      <p>I'm an Tech Geek</p>
+    </div>
+  </section>
+  
+  <!-- What Am I? Section -->
+  <section class="what-am-i-section">
+    <div class="container">
+      <h2>What Am I?</h2>
+      <p>
+        Hello Visitors, I am Kunal. I am a Java programmer and love to code in Java. I am an optimistic person.
+        I'm the one who doesn't stop when failure strikes; rather, I work on myself more to understand the reason behind it.
+        Determined, hardworking, and passionate toward my goals—I am a hardworking, passionate individual.
+        I have worked with 2 companies as an Android app developer. I am proficient in Native Android, JAVA, PHP, SQL, and Firebase.
+        I am a quick learner and committed to my trade as a developer, and I would love to work as one.
+        I adapt to new environments very easily and aspire to be a software engineer.
+      </p>
+    </div>
+  </section>
+  
+  <!-- Main Content Section (Blog Posts) -->
+  <main>
+    <div class="container">
+      <div class="posts">
+        <!-- Post 1 -->
+        <article class="post">
+          <img src="images/mountains.jpg" alt="Blog Post 1">
+          <div class="post-content">
+            <h2>Exploring the Mountains</h2>
+            <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Proin consequat, nulla vel tempor fermentum, orci odio dictum mi, ut dapibus velit elit in nisi.</p>
+            <a href="#" class="read-more">Read More</a>
+          </div>
+        </article>
+        <!-- Post 2 -->
+        <article class="post">
+          <img src="images/city life.jpg" alt="Blog Post 2">
+          <div class="post-content">
+            <h2>City Life: An Urban Adventure</h2>
+            <p>Sed auctor, velit at congue porttitor, diam erat maximus odio, ac luctus nisi erat nec arcu. Duis ultrices mauris at mauris congue, quis lobortis nisi consequat.</p>
+            <a href="#" class="read-more">Read More</a>
+          </div>
+        </article>
+        <!-- Post 3 -->
+        <article class="post">
+          <img src="images/travel tips.jpg" alt="Blog Post 3">
+          <div class="post-content">
+            <h2>Travel Tips and Tricks</h2>
+            <p>Curabitur sit amet eros vitae quam venenatis aliquet. Integer euismod, nunc a ultricies tincidunt, sem ipsum luctus quam, ac malesuada sapien nisi ac felis.</p>
+            <a href="#" class="read-more">Read More</a>
+          </div>
+        </article>
+      </div>
+    </div>
+  </main>
+  
+  <!-- Unified Contact Section (Single Card for Both Details & Form) -->
+  <div id="contact">
+    <div class="container">
+      <h2>CONTACT</h2>
+      <div class="contact-card">
+        <!-- Left Column: Contact Details -->
+        <div class="contact-details">
+          <p><i class="fas fa-map-marker-alt"></i> Faridabad, Haryana</p>
+          <p><i class="fas fa-phone"></i> +91-8168296553</p>
+          <p><i class="fas fa-envelope"></i> Kunalsharma.fbd@gmail.com</p>
+          <p>Contact me and I'll get back to you within 24 hours.</p>
+        </div>
+        <!-- Right Column: Contact Form -->
+        <div class="contact-form">
+          <input class="form-control" id="name" name="name" placeholder="Name" type="text" required>
+          <input class="form-control" id="email" name="email" placeholder="Email" type="email" required>
+          <textarea class="form-control" id="comments" name="comments" placeholder="Comment" rows="5"></textarea>
+          <button type="submit">Send</button>
+        </div>
+      </div>
+    </div>
+  </div>
+  
+  <!-- User Avatar Section -->
+  <div class="user-details-section">
+    <div class="user-avatar-container">
+      <span class="user-avatar-line"></span>
+      <a class="url" rel="contact" title="Kunal Sharma" href="#">
+        <picture>
+          <img class="photo" alt="Kunal Sharma" src="images/1648540034361.jpg">
+        </picture>
+      </a>
+      <span class="user-avatar-line"></span>
+    </div>
+    <a class="user-name" rel="contact" href="#">Kunal Sharma</a>
+    <div class="user-bio">
+      ❖ You've come to the right place ✌️
+    </div>
+	
+	<div class="card -bottom-1">
+    <div class="icon">
+        <svg viewBox="0 0 24 24" height="24" width="24" xmlns="http://www.w3.org/2000/svg">
+            <path d="M11.984 16.815c2.596 0 4.706-2.111 4.706-4.707 0-1.409-.623-2.674-1.606-3.538-.346-.303-.735-.556-1.158-.748-.593-.27-1.249-.421-1.941-.421s-1.349.151-1.941.421c-.424.194-.814.447-1.158.749-.985.864-1.608 2.129-1.608 3.538 0 2.595 2.112 4.706 4.706 4.706zm.016-8.184c1.921 0 3.479 1.557 3.479 3.478 0 1.921-1.558 3.479-3.479 3.479s-3.479-1.557-3.479-3.479c0-1.921 1.558-3.478 3.479-3.478zm5.223.369h6.777v10.278c0 2.608-2.114 4.722-4.722 4.722h-14.493c-2.608 0-4.785-2.114-4.785-4.722v-10.278h6.747c-.544.913-.872 1.969-.872 3.109 0 3.374 2.735 6.109 6.109 6.109s6.109-2.735 6.109-6.109c.001-1.14-.327-2.196-.87-3.109zm2.055-9h-12.278v5h-1v-5h-1v5h-1v-4.923c-.346.057-.682.143-1 .27v4.653h-1v-4.102c-1.202.857-2 2.246-2 3.824v3.278h7.473c1.167-1.282 2.798-2 4.511-2 1.722 0 3.351.725 4.511 2h7.505v-3.278c0-2.608-2.114-4.722-4.722-4.722zm2.722 5.265c0 .406-.333.735-.745.735h-2.511c-.411 0-.744-.329-.744-.735v-2.53c0-.406.333-.735.744-.735h2.511c.412 0 .745.329.745.735v2.53z"></path>
+        </svg>
+    </div>
+    <strong style="color: black;"> Instagram
+    </strong>
+    <div class="card__body">
+        Get UI elements that help you stand out.
+    </div>
+    <span>Follow us</span>
+	</div>
+	<div class="group relative inline-block -bottom-6">
+	  <button class="focus:outline-none">
+		<svg
+		  viewBox="0 0 16 16"
+		  class="bi bi-instagram transform transition-transform duration-300 hover:scale-125 hover:text-blue-500"
+		  fill="currentColor"
+		  height="40"
+		  width="40"
+		  xmlns="http://www.w3.org/2000/svg"
+		>
+		  <path
+			d="M8 0C5.829 0 5.556.01 4.703.048 3.85.088 3.269.222 2.76.42a3.9 3.9 0 0 0-1.417.923A3.9 3.9 0 0 0 .42 2.76C.222 3.268.087 3.85.048 4.7.01 5.555 0 5.827 0 8.001c0 2.172.01 2.444.048 3.297.04.852.174 1.433.372 1.942.205.526.478.972.923 1.417.444.445.89.719 1.416.923.51.198 1.09.333 1.942.372C5.555 15.99 5.827 16 8 16s2.444-.01 3.298-.048c.851-.04 1.434-.174 1.943-.372a3.9 3.9 0 0 0 1.416-.923c.445-.445.718-.891.923-1.417.197-.509.332-1.09.372-1.942C15.99 10.445 16 10.173 16 8s-.01-2.445-.048-3.299c-.04-.851-.175-1.433-.372-1.941a3.9 3.9 0 0 0-.923-1.417A3.9 3.9 0 0 0 13.24.42c-.51-.198-1.092-.333-1.943-.372C10.443.01 10.172 0 7.998 0zm-.717 1.442h.718c2.136 0 2.389.007 3.232.046.78.035 1.204.166 1.486.275.373.145.64.319.92.599s.453.546.598.92c.11.281.24.705.275 1.485.039.843.047 1.096.047 3.231s-.008 2.389-.047 3.232c-.035.78-.166 1.203-.275 1.485a2.5 2.5 0 0 1-.599.919c-.28.28-.546.453-.92.598-.28.11-.704.24-1.485.276-.843.038-1.096.047-3.232.047s-2.39-.009-3.233-.047c-.78-.036-1.203-.166-1.485-.276a2.5 2.5 0 0 1-.92-.598 2.5 2.5 0 0 1-.6-.92c-.109-.281-.24-.705-.275-1.485-.038-.843-.046-1.096-.046-3.233s.008-2.388.046-3.231c.036-.78.166-1.204.276-1.486.145-.373.319-.64.599-.92s.546-.453.92-.598c.282-.11.705-.24 1.485-.276.738-.034 1.024-.044 2.515-.045zm4.988 1.328a.96.96 0 1 0 0 1.92.96.96 0 0 0 0-1.92m-4.27 1.122a4.109 4.109 0 1 0 0 8.217 4.109 4.109 0 0 0 0-8.217m0 1.441a2.667 2.667 0 1 1 0 5.334 2.667 2.667 0 0 1 0-5.334"
+		  ></path>
+		</svg>
+	  </button>
+	  <span
+		class="absolute -bottom-10 left-1/2 transform -translate-x-1/2 z-20 px-4 py-2 text-sm font-bold text-white bg-gray-900 rounded-lg shadow-lg transition-transform duration-300 ease-in-out scale-0 group-hover:scale-100">Instagram
+		</span>
+		</div>
+		
+		<!-- <div class="group relative">
+		  <button>
+		  <svg stroke-linejoin="round" stroke-linecap="round" stroke-width="2" stroke="currentColor" fill="none" viewBox="0 0 24 24" class="w-8 hover:scale-125 duration-200 hover:stroke-blue-500"><path d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 0 0-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0 0 20 4.77 5.07 5.07 0 0 0 19.91 1S18.73.65 16 2.48a13.38 13.38 0 0 0-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07 0 0 0 5 4.77a5.44 5.44 0 0 0-1.5 3.78c0 5.42 3.3 6.61 6.44 7A3.37 3.37 0 0 0 9 18.13V22"></path></svg>
+		  </button>
+		  <span class="absolute -top-14 left-[50%] -translate-x-[50%] 
+		  z-20 origin-left scale-0 px-3 rounded-lg border 
+		  border-gray-300 bg-white py-2 text-sm font-bold
+		  shadow-md transition-all duration-300 ease-in-out 
+		  group-hover:scale-100">GitHub</span></div> -->
+
+	  </div>
+  
+  <!-- Footer Section -->
+  <footer>
+    <div class="container">
+      <p>&copy; 2025 My Awesome Blog. All rights reserved.</p>
+    </div>
+  </footer>
+  
+  <!-- JavaScript for Mobile Header Toggle -->
+  <script>
+    const burger = document.querySelector('.burger');
+    const header = document.getElementById('main-header');
+    
+    // Toggle header expansion on burger click
+    burger.addEventListener('click', (e) => {
+      e.stopPropagation();
+      header.classList.toggle('expanded');
+    });
+    
+    // Close header if clicking outside when expanded
+    document.addEventListener('click', (e) => {
+      if (header.classList.contains('expanded') && !header.contains(e.target)) {
+        header.classList.remove('expanded');
+      }
+    });
+  </script>
+  
+  <!-- JavaScript for Task Progress Tracker functionality (if needed) -->
+  <script>
+    // Total number of days required for the task
+    const totalDays = 118;
+    
+    // Calculate the real days passed from a fixed start date (today)
+    const startDate = new Date();
+    startDate.setHours(0, 0, 0, 0);
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+    const realDaysPassed = Math.floor((today - startDate) / (1000 * 60 * 60 * 24)) + 1;
+    
+    // For simulation, we'll use a variable that can be manually incremented.
+    let simulatedDaysPassed = Math.max(0, Math.min(realDaysPassed, totalDays));
+    
+    // Grab UI elements
+    const progressFill = document.getElementById("progressFill");
+    const progressCylinderText = document.getElementById("progressCylinderText");
+    const remainingCylinderText = document.getElementById("remainingCylinderText");
+    const liquidProgress = document.getElementById("liquidProgress");
+    const liquidRemaining = document.getElementById("liquidRemaining");
+    const daysGrid = document.getElementById("daysGrid");
+    const messageBox = document.getElementById("messageBox");
+    
+    // Array of motivational messages
+    const motivationalMessages = [
+      "Keep going!",
+      "Consistency wins!",
+      "Every step counts!",
+      "Stay on track!",
+      "You're doing great!",
+      "Progress, not perfection!",
+      "Believe in yourself!"
+    ];
+    function getMotivationalMessage() {
+      const randomIndex = Math.floor(Math.random() * motivationalMessages.length);
+      return motivationalMessages[randomIndex];
+    }
+    
+    // Create the days grid (118 days)
+    for (let i = 1; i <= totalDays; i++) {
+      const dayBox = document.createElement("div");
+      dayBox.classList.add("day");
+      dayBox.innerText = i;
+      dayBox.addEventListener("click", function () {
+        const clickedDay = parseInt(dayBox.innerText);
+        const remainingDays = totalDays - clickedDay;
+        let message = "";
+        if (remainingDays === 0) {
+          message = "Congratulations! You've completed the task!";
+        } else {
+          message = getMotivationalMessage() + " You have " + remainingDays + " day" + (remainingDays > 1 ? "s" : "") + " remaining.";
+        }
+        messageBox.innerText = message;
+      });
+      daysGrid.appendChild(dayBox);
+    }
+    
+    // Update all UI elements based on the current simulatedDaysPassed
+    function updateUI() {
+      const progressPercentage = ((simulatedDaysPassed / totalDays) * 100).toFixed(1);
+      const remainingPercentage = (100 - progressPercentage).toFixed(1);
+      
+      progressFill.style.width = progressPercentage + "%";
+      progressFill.innerText = progressPercentage + "%";
+      
+      liquidProgress.style.height = progressPercentage + "%";
+      progressCylinderText.innerText = progressPercentage + "%";
+      
+      liquidRemaining.style.height = remainingPercentage + "%";
+      remainingCylinderText.innerText = remainingPercentage + "%";
+      
+      const dayBoxes = document.querySelectorAll('.day');
+      dayBoxes.forEach((box, index) => {
+        if (index < simulatedDaysPassed) {
+          box.classList.add("completed");
+        } else {
+          box.classList.remove("completed");
+        }
+      });
+    }
+    
+    updateUI();
+    
+    document.getElementById("simulateBtn").addEventListener("click", function() {
+      if (simulatedDaysPassed < totalDays) {
+        simulatedDaysPassed++;
+        updateUI();
+      } else {
+        messageBox.innerText = "Task Completed!";
+      }
+    });
+    
+    document.getElementById("resetBtn").addEventListener("click", function() {
+      simulatedDaysPassed = 0;
+      updateUI();
+      messageBox.innerText = "Simulation reset. Click on any day for a motivational message!";
+    });
+  </script>
+</body>
+</html>

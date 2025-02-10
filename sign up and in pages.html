@@ -1,0 +1,399 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Auth UI</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Poppins', sans-serif;
+        }
+
+        body {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            background: linear-gradient(45deg, #ff6b6b, #4ecdc4);
+            overflow: hidden;
+        }
+
+        .container {
+            position: relative;
+            width: 768px;
+            min-height: 480px;
+            background: #fff;
+            border-radius: 20px;
+            box-shadow: 0 15px 40px rgba(0,0,0,0.2);
+            overflow: hidden;
+        }
+
+        .form {
+            position: absolute;
+            top: 0;
+            height: 100%;
+            padding: 40px;
+            transition: 0.6s;
+        }
+
+        .signin-form {
+            left: 0;
+            width: 50%;
+            z-index: 2;
+        }
+
+        .signup-form {
+            left: 0;
+            width: 50%;
+            opacity: 0;
+            z-index: 1;
+        }
+
+        .container.active .signin-form {
+            transform: translateX(100%);
+            opacity: 0;
+        }
+
+        .container.active .signup-form {
+            transform: translateX(100%);
+            opacity: 1;
+            z-index: 5;
+        }
+
+        h2 {
+            font-size: 30px;
+            margin-bottom: 30px;
+            color: #333;
+        }
+
+        .form-group {
+            position: relative;
+            margin-bottom: 25px;
+        }
+
+        .form-group input {
+            width: 100%;
+            padding: 10px 0;
+            font-size: 16px;
+            border: none;
+            border-bottom: 2px solid #ddd;
+            outline: none;
+            transition: 0.3s;
+        }
+
+        .form-group label {
+            position: absolute;
+            left: 0;
+            top: 10px;
+            font-size: 16px;
+            color: #999;
+            pointer-events: none;
+            transition: 0.3s;
+        }
+
+        .form-group input:focus ~ label,
+        .form-group input:valid ~ label {
+            top: -12px;
+            font-size: 12px;
+            color: #4ecdc4;
+        }
+
+        .form-group input:focus,
+        .form-group input:valid {
+            border-bottom: 2px solid #4ecdc4;
+        }
+
+        .error-message {
+            color: #ff4757;
+            font-size: 12px;
+            margin-top: 5px;
+            display: none;
+        }
+
+        .btn {
+            width: 100%;
+            padding: 12px;
+            background: linear-gradient(45deg, #4ecdc4, #45b7af);
+            border: none;
+            border-radius: 25px;
+            color: #fff;
+            font-size: 16px;
+            cursor: pointer;
+            transition: 0.3s;
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(78, 205, 196, 0.4);
+        }
+
+        .toggle-container {
+            position: absolute;
+            top: 0;
+            left: 50%;
+            width: 50%;
+            height: 100%;
+            overflow: hidden;
+            transition: 0.6s;
+            z-index: 100;
+        }
+
+        .container.active .toggle-container {
+            transform: translateX(-100%);
+        }
+
+        .toggle {
+            position: relative;
+            width: 200%;
+            height: 100%;
+            background: linear-gradient(45deg, #4ecdc4, #ff6b6b);
+            transition: 0.6s;
+        }
+
+        .container.active .toggle {
+            transform: translateX(-50%);
+        }
+
+        .toggle-panel {
+            position: absolute;
+            top: 0;
+            width: 50%;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            padding: 40px;
+            color: #fff;
+            text-align: center;
+        }
+
+        .toggle-left {
+            transform: translateX(-20%);
+        }
+
+        .toggle-right {
+            right: 0;
+            transform: translateX(0);
+        }
+
+        .container.active .toggle-left {
+            transform: translateX(0);
+        }
+
+        .container.active .toggle-right {
+            transform: translateX(20%);
+        }
+
+        .toggle-panel h2 {
+            color: #fff;
+            margin-bottom: 20px;
+        }
+
+        .toggle-panel p {
+            margin-bottom: 30px;
+        }
+
+        .toggle-btn {
+            background: transparent;
+            border: 2px solid #fff;
+            padding: 10px 30px;
+            border-radius: 25px;
+            color: #fff;
+            cursor: pointer;
+            transition: 0.3s;
+        }
+
+        .toggle-btn:hover {
+            background: #fff;
+            color: #4ecdc4;
+        }
+
+        .social-icons {
+            margin-top: 20px;
+            display: flex;
+            gap: 15px;
+        }
+
+        .social-icons a {
+            width: 40px;
+            height: 40px;
+            border: 1px solid #fff;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #fff;
+            text-decoration: none;
+            transition: 0.3s;
+        }
+
+        .social-icons a:hover {
+            background: #fff;
+            color: #4ecdc4;
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                width: 90%;
+                min-height: 500px;
+            }
+
+            .form {
+                width: 100%;
+            }
+
+            .toggle-container {
+                display: none;
+            }
+
+            .container.active .signin-form,
+            .container.active .signup-form {
+                transform: translateX(0);
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container" id="container">
+        <form class="signin-form" onsubmit="return validateSignIn()">
+            <h2>Sign In</h2>
+            <div class="form-group">
+                <input type="email" id="signin-email" required>
+                <label>Email</label>
+                <div class="error-message" id="signin-email-error"></div>
+            </div>
+            <div class="form-group">
+                <input type="password" id="signin-password" required>
+                <label>Password</label>
+                <div class="error-message" id="signin-password-error"></div>
+            </div>
+            <button type="submit" class="btn">Sign In</button>
+        </form>
+
+        <form class="signup-form" onsubmit="return validateSignUp()">
+            <h2>Create Account</h2>
+            <div class="form-group">
+                <input type="text" id="signup-name" required>
+                <label>Name</label>
+                <div class="error-message" id="signup-name-error"></div>
+            </div>
+            <div class="form-group">
+                <input type="email" id="signup-email" required>
+                <label>Email</label>
+                <div class="error-message" id="signup-email-error"></div>
+            </div>
+            <div class="form-group">
+                <input type="password" id="signup-password" required>
+                <label>Password</label>
+                <div class="error-message" id="signup-password-error"></div>
+            </div>
+            <div class="form-group">
+                <input type="password" id="signup-confirm-password" required>
+                <label>Confirm Password</label>
+                <div class="error-message" id="signup-confirm-password-error"></div>
+            </div>
+            <button type="submit" class="btn">Sign Up</button>
+        </form>
+
+        <div class="toggle-container">
+            <div class="toggle">
+                <div class="toggle-panel toggle-left">
+                    <h2>Welcome Back!</h2>
+                    <p>Enter your personal details to use all site features</p>
+                    <button class="toggle-btn" onclick="container.classList.remove('active')">Sign In</button>
+                    <div class="social-icons">
+                        <a href="#"><i class="fab fa-google"></i></a>
+                        <a href="#"><i class="fab fa-facebook"></i></a>
+                        <a href="#"><i class="fab fa-twitter"></i></a>
+                    </div>
+                </div>
+                <div class="toggle-panel toggle-right">
+                    <h2>Hello, Friend!</h2>
+                    <p>Register with your personal details to use all site features</p>
+                    <button class="toggle-btn" onclick="container.classList.add('active')">Sign Up</button>
+                    <div class="social-icons">
+                        <a href="#"><i class="fab fa-google"></i></a>
+                        <a href="#"><i class="fab fa-facebook"></i></a>
+                        <a href="#"><i class="fab fa-twitter"></i></a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function validateSignIn() {
+            event.preventDefault();
+            const email = document.getElementById('signin-email').value;
+            const password = document.getElementById('signin-password').value;
+            let isValid = true;
+
+            if (!email.match(/^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/)) {
+                showError('signin-email-error', 'Please enter a valid email');
+                isValid = false;
+            }
+
+            if (password.length < 6) {
+                showError('signin-password-error', 'Password must be at least 6 characters');
+                isValid = false;
+            }
+
+            return isValid;
+        }
+
+        function validateSignUp() {
+            event.preventDefault();
+            const name = document.getElementById('signup-name').value;
+            const email = document.getElementById('signup-email').value;
+            const password = document.getElementById('signup-password').value;
+            const confirmPassword = document.getElementById('signup-confirm-password').value;
+            let isValid = true;
+
+            if (name.trim() === '') {
+                showError('signup-name-error', 'Name is required');
+                isValid = false;
+            }
+
+            if (!email.match(/^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/)) {
+                showError('signup-email-error', 'Please enter a valid email');
+                isValid = false;
+            }
+
+            if (password.length < 6) {
+                showError('signup-password-error', 'Password must be at least 6 characters');
+                isValid = false;
+            }
+
+            if (password !== confirmPassword) {
+                showError('signup-confirm-password-error', 'Passwords do not match');
+                isValid = false;
+            }
+
+            return isValid;
+        }
+
+        function showError(elementId, message) {
+            const errorElement = document.getElementById(elementId);
+            errorElement.textContent = message;
+            errorElement.style.display = 'block';
+            errorElement.parentElement.classList.add('shake');
+            setTimeout(() => {
+                errorElement.parentElement.classList.remove('shake');
+            }, 500);
+        }
+
+        // Real-time validation
+        document.querySelectorAll('input').forEach(input => {
+            input.addEventListener('input', function() {
+                const errorElement = this.parentElement.querySelector('.error-message');
+                errorElement.style.display = 'none';
+            });
+        });
+    </script>
+</body>
+</html>

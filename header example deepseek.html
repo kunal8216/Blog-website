@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Blog Header Example</title>
+  <style>
+    /* General Reset */
+    body {
+      margin: 0;
+      font-family: Arial, sans-serif;
+    }
+
+    a {
+      text-decoration: none;
+      color: inherit;
+    }
+
+    /* Header Styles */
+    header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 15px 30px;
+      background-color: #ffffff;
+      box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+      position: sticky;
+      top: 0;
+      z-index: 1000;
+    }
+
+    /* Logo */
+    .logo {
+      font-size: 24px;
+      font-weight: bold;
+      color: #333;
+    }
+
+    .logo img {
+      height: 40px;
+      vertical-align: middle;
+    }
+
+    /* Navigation Menu */
+    nav {
+      display: flex;
+      gap: 20px;
+    }
+
+    nav a {
+      color: #333;
+      font-weight: 500;
+      transition: color 0.3s ease;
+    }
+
+    nav a:hover {
+      color: #ff5722;
+    }
+
+    /* Search Bar */
+    .search-bar {
+      display: flex;
+      align-items: center;
+    }
+
+    .search-bar input {
+      padding: 8px 12px;
+      border: 1px solid #ddd;
+      border-radius: 5px;
+      margin-right: 10px;
+    }
+
+    .search-bar button {
+      padding: 8px 15px;
+      background-color: #ff5722;
+      color: #fff;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+      transition: background-color 0.3s ease;
+    }
+
+    .search-bar button:hover {
+      background-color: #e64a19;
+    }
+
+    /* CTA Button */
+    .cta-button {
+      padding: 10px 20px;
+      background-color: #333;
+      color: #fff;
+      border-radius: 5px;
+      font-weight: 500;
+      transition: background-color 0.3s ease;
+    }
+
+    .cta-button:hover {
+      background-color: #555;
+    }
+
+    /* Responsive Design */
+    @media (max-width: 768px) {
+      header {
+        flex-direction: column;
+        align-items: flex-start;
+        padding: 15px;
+      }
+
+      .logo {
+        margin-bottom: 10px;
+      }
+
+      nav {
+        flex-wrap: wrap;
+        gap: 10px;
+        margin-bottom: 10px;
+      }
+
+      .search-bar {
+        width: 100%;
+        margin-bottom: 10px;
+      }
+
+      .search-bar input {
+        flex-grow: 1;
+      }
+
+      .cta-button {
+        width: 100%;
+        text-align: center;
+      }
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <!-- Logo -->
+    <div class="logo">
+      <img src="logo.png" alt="Blog Logo">
+      My Blog
+    </div>
+
+    <!-- Navigation Menu -->
+    <nav>
+      <a href="#">Home</a>
+      <a href="#">Categories</a>
+      <a href="#">About</a>
+      <a href="#">Contact</a>
+    </nav>
+
+    <!-- Search Bar -->
+    <div class="search-bar">
+      <input type="text" placeholder="Search..." aria-label="Search">
+      <button>Search</button>
+    </div>
+
+    <!-- CTA Button -->
+    <a href="#" class="cta-button">Subscribe</a>
+  </header>
+
+  <!-- Main Content -->
+  <main>
+    <h1>Welcome to My Blog</h1>
+    <p>This is an example of a blog header with all the essential characteristics.</p>
+  </main>
+</body>
+</html>

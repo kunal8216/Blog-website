@@ -1,0 +1,502 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Task Progress Tracker with Simulation</title>
+  <!-- Google Fonts for a modern look -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link
+    href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;700&display=swap"
+    rel="stylesheet"
+  />
+  <style>
+    /* Basic Reset */
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+    body {
+      font-family: 'Poppins', sans-serif;
+      background: linear-gradient(135deg, #74ebd5, #ACB6E5);
+      padding: 1rem;
+      color: #333;
+    }
+    .main-container {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 20px;
+      justify-content: center;
+    }
+    .card {
+      background: #fff;
+      padding: 1.5rem;
+      border-radius: 20px;
+      box-shadow: 0 8px 16px rgba(0,0,0,0.2);
+      flex: 1 1 300px;
+      max-width: 600px;
+    }
+    h2 {
+      text-align: center;
+      margin-bottom: 1rem;
+    }
+    /* Left Card – Daily Progress Tracker */
+    .progress-container {
+      margin-bottom: 1.5rem;
+    }
+    .progress-bar {
+      width: 100%;
+      height: 30px;
+      background-color: #e0e0e0;
+      border-radius: 15px;
+      overflow: hidden;
+      box-shadow: inset 0 1px 3px rgba(0,0,0,0.2);
+    }
+    .progress-fill {
+      height: 100%;
+      width: 0%;
+      background: linear-gradient(90deg, #56ab2f, #a8e063);
+      text-align: center;
+      line-height: 30px;
+      color: #fff;
+      font-weight: 600;
+      transition: width 1s ease-in-out;
+    }
+    .days-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(30px, 1fr));
+      gap: 5px;
+      margin-top: 1rem;
+    }
+    .day {
+      background-color: #f0f0f0;
+      border-radius: 6px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      height: 30px;
+      font-size: 0.9rem;
+      color: #555;
+      transition: background-color 0.3s, transform 0.2s;
+      cursor: pointer;
+    }
+    .day.completed {
+      background-color: #56ab2f;
+      color: #fff;
+    }
+    .day:hover {
+      transform: scale(1.1);
+    }
+    #messageBox {
+      margin-top: 1.5rem;
+      padding: 1rem;
+      border-radius: 10px;
+      background: #f9f9f9;
+      box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+      text-align: center;
+      font-size: 1.1rem;
+      color: #333;
+      min-height: 50px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .simulate-controls {
+      margin-top: 1.5rem;
+      text-align: center;
+    }
+    .simulate-controls button {
+      padding: 0.5rem 1rem;
+      margin: 0 5px;
+      font-size: 1rem;
+      font-weight: 500;
+      border: none;
+      border-radius: 5px;
+      background-color: #56ab2f;
+      color: #fff;
+      cursor: pointer;
+      transition: background-color 0.3s;
+    }
+    .simulate-controls button:hover {
+      background-color: #429d24;
+    }
+    /* Right Card – Liquid Cylinder Bar Charts (Side by Side) */
+    .cylinders-container {
+      display: flex;
+      flex-direction: row;
+      justify-content: center;
+      align-items: center;
+      gap: 40px;
+      margin-top: 1rem;
+    }
+    .cylinder-wrapper {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+    .cylinder {
+      position: relative;
+      width: 100px;
+      height: 300px;
+      background: #e0e0e0;
+      border-radius: 50px;
+      overflow: hidden;
+      box-shadow: inset 0 0 10px rgba(0,0,0,0.2);
+    }
+    .liquid {
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      width: 100%;
+      transition: height 2s ease;
+      overflow: hidden;
+    }
+    .wave {
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      width: 200%;
+      height: 30px;
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='100' height='30' viewBox='0 0 100 30'%3E%3Cpath d='M0 15 Q25 0 50 15 T100 15 V30 H0 Z' fill='rgba(255,255,255,0.5)'/%3E%3C/svg%3E");
+      background-size: 50% 100%;
+      animation: wave 3s linear infinite;
+    }
+    @keyframes wave {
+      0% { transform: translateX(0); }
+      100% { transform: translateX(-50%); }
+    }
+    .cylinder-text {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      font-size: 1.2em;
+      font-weight: bold;
+      color: #fff;
+      text-shadow: 1px 1px 2px #000;
+      pointer-events: none;
+    }
+    .cylinder-label {
+      margin-top: 10px;
+      text-align: center;
+      font-weight: 500;
+    }
+	
+	/* Header */
+    header {
+      background: var(--header-bg);
+      color: var(--link-color);
+      padding: 20px 0;
+      position: sticky;
+      top: 0;
+      z-index: 1000;
+      transition: all 0.3s ease;
+    }
+    /* Desktop Header: Header container as a row */
+    .header-container {
+      display: flex;
+      flex-direction: row;
+      align-items: center;
+      justify-content: space-between;
+    }
+    /* Header Left: Avatar and Logo Text */
+    .header-left {
+      display: flex;
+      align-items: center;
+    }
+    .header-avatar {
+      width: 60px;
+      height: 60px;
+      border-radius: 50%;
+      object-fit: cover;
+      margin-right: 15px;
+    }
+    .logo-text {
+      font-size: 2.2em;
+      font-weight: 600;
+      letter-spacing: 0.5px;
+    }
+    /* Navigation Container (Desktop) */
+    .nav-container {
+      /* In desktop view, display the nav as-is */
+      max-height: none;
+    }
+    nav ul {
+      list-style: none;
+      display: flex;
+      gap: 20px;
+      justify-content: flex-end;
+    }
+    nav ul li a {
+      color: var(--link-color);
+      font-weight: 500;
+      position: relative;
+      transition: color 0.3s ease, transform 0.3s ease;
+    }
+    nav ul li a::after {
+      content: "";
+      position: absolute;
+      width: 0;
+      height: 2px;
+      bottom: -2px;
+      left: 50%;
+      background-color: var(--primary-color);
+      transition: width 0.3s ease, left 0.3s ease;
+    }
+    nav ul li a:hover {
+      color: var(--primary-color);
+      transform: translateY(-3px);
+    }
+    nav ul li a:hover::after {
+      width: 100%;
+      left: 0;
+    }
+    nav ul li a.tracker-link {
+      border-bottom: 2px solid transparent;
+      padding-bottom: 2px;
+    }
+    nav ul li a.tracker-link:hover {
+      border-bottom: 2px solid var(--primary-color);
+    }
+    
+    /* Burger Icon (hidden on desktop) */
+    .burger {
+      display: none;
+      flex-direction: column;
+      gap: 5px;
+      cursor: pointer;
+    }
+    .burger .bar {
+      width: 25px;
+      height: 3px;
+      background-color: var(--link-color);
+      transition: all 0.3s ease;
+    }
+    
+    /* Responsive Styles for Mobile */
+    @media (max-width: 768px) {
+      .header-container {
+        flex-direction: column;
+        align-items: stretch;
+      }
+      /* Top row stays as a row */
+      .header-top {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        width: 100%;
+      }
+      /* Burger icon appears on mobile */
+      .burger {
+        display: flex;
+      }
+      /* Collapse the navigation container by default */
+      .nav-container {
+        width: 100%;
+        overflow: hidden;
+        transition: max-height 0.3s ease-out;
+        max-height: 0;
+      }
+      /* When header is expanded, show the nav container */
+      header.expanded .nav-container {
+        max-height: 500px;
+      }
+      /* In mobile view, center the nav items */
+      nav ul {
+        flex-direction: column;
+        align-items: center;
+        gap: 10px;
+        padding: 10px 0;
+      }
+      /* Adjust header font sizes for mobile */
+      .logo-text {
+        font-size: 1.8em;
+      }
+    }
+  </style>
+</head>
+<body>
+<!-- Header Section -->
+  <header id="main-header">
+    <div class="container header-container">
+      <div class="header-top">
+        <div class="header-left">
+          <div class="logo-text">Kunal's Blog</div>
+        </div>
+        <div class="burger">
+          <div class="bar"></div>
+          <div class="bar"></div>
+          <div class="bar"></div>
+        </div>
+      </div>
+      <nav class="nav-container">
+        <ul>
+          <li><a style="font-size:20px;" href="blog website.html">Home</a></li>
+        </ul>
+      </nav>
+    </div>
+  </header>
+
+
+  <div class="main-container">
+    <!-- Left Card: Daily Progress Tracker -->
+    <div class="card left-card">
+      <h2>Task Progress Tracker</h2>
+      <div class="progress-container">
+        <div class="progress-bar">
+          <div class="progress-fill" id="progressFill">0%</div>
+        </div>
+      </div>
+      <div class="days-grid" id="daysGrid"></div>
+      <div id="messageBox">
+        Click on any day to see your progress and a motivational message!
+      </div>
+      <div class="simulate-controls">
+        <button id="simulateBtn">Simulate Next Day</button>
+        <button id="resetBtn">Reset Simulation</button>
+      </div>
+    </div>
+    <!-- Right Card: Liquid Cylinder Bar Charts -->
+    <div class="card right-card">
+      <h2>Liquid Cylinder Progress</h2>
+      <div class="cylinders-container">
+        <!-- Current Progress Cylinder (Green Liquid) -->
+        <div class="cylinder-wrapper">
+          <div class="cylinder" id="progressCylinder">
+            <div class="liquid" id="liquidProgress" style="background-color: #56ab2f; height: 0%;">
+              <div class="wave"></div>
+            </div>
+            <div class="cylinder-text" id="progressCylinderText">0%</div>
+          </div>
+          <div class="cylinder-label">Current Progress</div>
+        </div>
+        <!-- Remaining Progress Cylinder (Red Liquid) -->
+        <div class="cylinder-wrapper">
+          <div class="cylinder" id="remainingCylinder">
+            <div class="liquid" id="liquidRemaining" style="background-color: #e74c3c; height: 0%;">
+              <div class="wave"></div>
+            </div>
+            <div class="cylinder-text" id="remainingCylinderText">0%</div>
+          </div>
+          <div class="cylinder-label">Remaining Progress</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // Total number of days required for the task
+    const totalDays = 118;
+
+    // Calculate the real days passed from a fixed start date (today)
+    const startDate = new Date();
+    startDate.setHours(0,0,0,0);
+    const today = new Date();
+    today.setHours(0,0,0,0);
+    const realDaysPassed = Math.floor((today - startDate) / (1000 * 60 * 60 * 24)) + 1;
+    
+    // For simulation, we'll use a variable that can be manually incremented.
+    // Initialize simulatedDaysPassed with the real days passed (or 0 if you prefer to start fresh)
+    let simulatedDaysPassed = Math.max(0, Math.min(realDaysPassed, totalDays));
+    
+    // Grab UI elements that need to be updated
+    const progressFill = document.getElementById("progressFill");
+    const progressCylinderText = document.getElementById("progressCylinderText");
+    const remainingCylinderText = document.getElementById("remainingCylinderText");
+    const liquidProgress = document.getElementById("liquidProgress");
+    const liquidRemaining = document.getElementById("liquidRemaining");
+    const daysGrid = document.getElementById("daysGrid");
+    const messageBox = document.getElementById("messageBox");
+    
+    // Array of motivational messages
+    const motivationalMessages = [
+      "Keep going!",
+      "Consistency wins!",
+      "Every step counts!",
+      "Stay on track!",
+      "You're doing great!",
+      "Progress, not perfection!",
+      "Believe in yourself!"
+    ];
+    function getMotivationalMessage() {
+      const randomIndex = Math.floor(Math.random() * motivationalMessages.length);
+      return motivationalMessages[randomIndex];
+    }
+    
+    // Create the days grid (118 days)
+    for (let i = 1; i <= totalDays; i++) {
+      const dayBox = document.createElement("div");
+      dayBox.classList.add("day");
+      dayBox.innerText = i;
+      // Add click event for motivational messages
+      dayBox.addEventListener("click", function () {
+        const clickedDay = parseInt(dayBox.innerText);
+        const remainingDays = totalDays - clickedDay;
+        let message = "";
+        if (remainingDays === 0) {
+          message = "Congratulations! You've completed the task!";
+        } else {
+          message =
+            getMotivationalMessage() +
+            " You have " +
+            remainingDays +
+            " day" +
+            (remainingDays > 1 ? "s" : "") +
+            " remaining.";
+        }
+        messageBox.innerText = message;
+      });
+      daysGrid.appendChild(dayBox);
+    }
+    
+    // Update all UI elements based on the current simulatedDaysPassed
+    function updateUI() {
+      // Calculate progress percentages
+      const progressPercentage = ((simulatedDaysPassed / totalDays) * 100).toFixed(1);
+      const remainingPercentage = (100 - progressPercentage).toFixed(1);
+      
+      // Update progress bar
+      progressFill.style.width = progressPercentage + "%";
+      progressFill.innerText = progressPercentage + "%";
+      
+      // Update cylinder gauges
+      liquidProgress.style.height = progressPercentage + "%";
+      progressCylinderText.innerText = progressPercentage + "%";
+      
+      liquidRemaining.style.height = remainingPercentage + "%";
+      remainingCylinderText.innerText = remainingPercentage + "%";
+      
+      // Update the grid day boxes
+      const dayBoxes = document.querySelectorAll('.day');
+      dayBoxes.forEach((box, index) => {
+        if (index < simulatedDaysPassed) {
+          box.classList.add("completed");
+        } else {
+          box.classList.remove("completed");
+        }
+      });
+    }
+    
+    // Initial UI update
+    updateUI();
+    
+    // Button handlers for simulation controls
+    document.getElementById("simulateBtn").addEventListener("click", function() {
+      if (simulatedDaysPassed < totalDays) {
+        simulatedDaysPassed++;
+        updateUI();
+      } else {
+        messageBox.innerText = "Task Completed!";
+      }
+    });
+    
+    document.getElementById("resetBtn").addEventListener("click", function() {
+      simulatedDaysPassed = 0;
+      updateUI();
+      messageBox.innerText = "Simulation reset. Click on any day for a motivational message!";
+    });
+  </script>
+</body>
+</html>
